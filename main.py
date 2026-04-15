@@ -1,5 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, status
 import random
+from dismissal_model import Dissmissal
+
+fake_db_dismissals = []
 
 app = FastAPI()
 
@@ -8,13 +11,27 @@ def read_root():
     return {"message": "Hello World!"}
 
 
-# Query Parameter - Exemplo
-@app.get("/api/{categories}")
+# Path Parameter - Exemplo
+@app.get("/api/categories/{categories}", status_code=status.HTTP_200_OK)
 def read_categories(categories):
     return [{"name_categorie": f"{categories}", "dismissal": 130}]
 
-# Query Parameter - Exemplo 2
-@app.get("/api/dismissal/{month}")
+# Path Parameter - Exemplo 2
+@app.get("/api/dismissal/{month}", status_code=status.HTTP_200_OK)
 def read_month_dismissals(month):
-    dismissals = [random.randint(50, 450) for _ in range(3)]
-    return {"name_month" : f"{month}", "dismissals": dismissals}
+    month_dismissals = [dismissal for dismissal in fake_db_dismissals if dismissal["month"] == month]
+    
+    return month_dismissals
+   
+            
+# Metodo HTTP POST/Request Body
+@app.post("/api/dismissal", status_code=status.HTTP_201_CREATED)
+def create_dismissal(dismissal: Dissmissal):
+    fake_db_dismissals.append(dismissal.model_dump())
+    return dismissal
+    
+    
+# Metodo HTTP GET
+@app.get("/api/dismissals", status_code=status.HTTP_200_OK)
+def get_all_dismissals():
+    return fake_db_dismissals
