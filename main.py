@@ -1,5 +1,5 @@
-from fastapi import FastAPI, status
-import random
+from fastapi import FastAPI, Header, Response, status, Cookie
+from typing import Annotated
 from dismissal_model import Dissmissal
 
 fake_db_dismissals = []
@@ -7,7 +7,9 @@ fake_db_dismissals = []
 app = FastAPI()
 
 @app.get("/")
-def read_root():
+# Head Parameter
+def read_root(user_agent: Annotated[str | None, Header()] = None):
+    print(f"User Agent: {user_agent}")
     return {"message": "Hello World!"}
 
 
@@ -18,8 +20,15 @@ def read_categories(categories):
 
 # Path Parameter - Exemplo 2
 @app.get("/api/dismissal/{month}", status_code=status.HTTP_200_OK)
-def read_month_dismissals(month):
+def read_month_dismissals(response:Response,month, ads_id: Annotated[str | None, Cookie()] = None):
+    
     month_dismissals = [dismissal for dismissal in fake_db_dismissals if dismissal["month"] == month]
+    # Cookie Parameter
+    # Setar um Cookie
+    response.set_cookie(key="User_Session", value="2uhf8u8uhe8uf8")
+    
+    # Ler um Cookie
+    print(f"Cookie: {ads_id}")
     
     return month_dismissals
    
