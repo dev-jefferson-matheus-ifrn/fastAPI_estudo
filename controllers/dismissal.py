@@ -3,8 +3,6 @@ from fastapi import APIRouter, Cookie, status, Header
 from services.dismissal_service import DismissalService
 from schema.dismissal_model import Dissmissal, DissmissalOutput
 
-fake_db_dismissals = []
-
 router = APIRouter(prefix="/api")
 
 @router.get("/", status_code=status.HTTP_200_OK)
@@ -35,9 +33,9 @@ def get_month_dismissals(month, ads_id: Annotated[str | None, Cookie()] = "93y8r
 
 # Metodo HTTP Get - Status Code 200
 # Path Parameter
-@router.get("/dismissal/{categorie}", status_code=status.HTTP_200_OK)
+@router.get("/dismissal/name/{categorie}", status_code=status.HTTP_200_OK, response_model=list[DissmissalOutput])
 def get_dismissals_by_categorie(categorie):
     
-    dissmissals = [dismissal for dismissal in fake_db_dismissals if dismissal["categorie"] == categorie]
+    dissmissals_by_categorie = DismissalService.get_all_by_categorie(categorie) 
     
-    return dissmissals
+    return dissmissals_by_categorie

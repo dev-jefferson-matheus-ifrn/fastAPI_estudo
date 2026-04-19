@@ -47,5 +47,18 @@ class DismissalService:
                 dissmissals_filtred.append(dismissal)
                 
         return dissmissals_filtred
+    
+    @staticmethod
+    def get_all_by_categorie(categorie_name) -> list:
+        all_dismissals = DismissalService.get_all_dismissals()
+        dissmissals_filtred = []
+        
+        print(all_dismissals)
+        for dismissal in all_dismissals:
+            if dismissal["name_categorie"] == categorie_name:
+                dissmissals_filtred.append(dismissal)
+                
+        return dissmissals_filtred
+        
         
         
