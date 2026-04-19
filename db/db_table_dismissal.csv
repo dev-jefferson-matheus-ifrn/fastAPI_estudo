@@ -1,3 +1,6 @@
 id,value,month,id_categorie
 1,150.0,Janeiro,1
 2,250.0,Janeiro,2
+3,150.0,Fevereiro,2
+4,350.0,Março,1
+5,100.0,Abril,1

@@ -1,7 +1,7 @@
 from typing import Annotated
 from fastapi import APIRouter, Cookie, status, Header
 from services.dismissal_service import DismissalService
-from schema.dismissal_model import Dissmissal
+from schema.dismissal_model import Dissmissal, DissmissalOutput
 
 fake_db_dismissals = []
 
@@ -14,7 +14,7 @@ def read_root(user_agent: Annotated[str | None, Header()]=None):
 
 
 # Metodo HTTP GET - Status Code 200
-@router.get("/dismissals",status_code=status.HTTP_200_OK)
+@router.get("/dismissals",status_code=status.HTTP_200_OK, response_model=list[DissmissalOutput])
 def get_all_dismissals():
     return DismissalService.get_all_dismissals()
 
@@ -26,11 +26,12 @@ def create_dismissal(dismissal: Dissmissal):
 # Metodo HTTP Get - Status Code 200
 # Cookie Parameter
 # Path Parameter
-@router.get("/dismissal/{month}", status_code=status.HTTP_200_OK)
+@router.get("/dismissal/{month}", status_code=status.HTTP_200_OK, response_model=list[DissmissalOutput])
 def get_month_dismissals(month, ads_id: Annotated[str | None, Cookie()] = "93y8rh8h2"):
-    month_dissmissals = [dismissal for dismissal in fake_db_dismissals if dismissal["month"] == month]
+    dissmissals_by_month = DismissalService.get_all_by_month(month)
     print(f"Cookie:{ads_id}")
-    return month_dissmissals
+    return dissmissals_by_month
+    
 
 # Metodo HTTP Get - Status Code 200
 # Path Parameter
