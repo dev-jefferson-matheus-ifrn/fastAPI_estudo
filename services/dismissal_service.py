@@ -11,30 +11,40 @@ class DismissalService:
     def get_all_dismissals() -> list:
         all_categories = {str(cat["id"]): cat["name"] for cat in CategorieService.get_all_categories()}
         all_dismissals = []
-        with open(DismissalService.path_db_table_dissmissal, newline= '' , mode='r', encoding="utf-8") as file:
-            reader = csv.DictReader(file)
+        
+        try:
+            with open(DismissalService.path_db_table_dissmissal, newline= '' , mode='r', encoding="utf-8") as file:
+                reader = csv.DictReader(file)
             
-            for row in reader:
-                categorie_id = row["id_categorie"]
-                if categorie_id in all_categories:
-                    row["name_categorie"] = all_categories[categorie_id]
+                for row in reader:
+                    categorie_id = row["id_categorie"]
+                    if categorie_id in all_categories:
+                        row["name_categorie"] = all_categories[categorie_id]
                     
-                all_dismissals.append(row)
+                    all_dismissals.append(row)
             
             return all_dismissals
+        
+        except csv.Error as e:
+            print(f"Error no arquivo {file} na linha {reader.line_num}: {e}")
             
                 
               
     @staticmethod
     def create_dissmissal(dismissal):
         cateogies = CategorieService.get_all_categories()
-        with open(DismissalService.path_db_table_dissmissal, newline='', mode='a', encoding="utf-8") as file:
-            writer = csv.DictWriter(file, fieldnames=DismissalService.fields)
+        
+        try:
+            with open(DismissalService.path_db_table_dissmissal, newline='', mode='a', encoding="utf-8") as file:
+                writer = csv.DictWriter(file, fieldnames=DismissalService.fields)
             
-            for categorie in cateogies:
-                if str(dismissal["id_categorie"]) == str(categorie["id"]):
-                    writer.writerow(dismissal)
-                    break
+                for categorie in cateogies:
+                    if str(dismissal["id_categorie"]) == str(categorie["id"]):
+                        writer.writerow(dismissal)
+                        break
+                    
+        except csv.Error as e:
+            print(f"Error no arquivo {file} na linha {writer.line_num}: {e}")
                 
                 
     @staticmethod
@@ -53,7 +63,6 @@ class DismissalService:
         all_dismissals = DismissalService.get_all_dismissals()
         dissmissals_filtred = []
         
-        print(all_dismissals)
         for dismissal in all_dismissals:
             if dismissal["name_categorie"] == categorie_name:
                 dissmissals_filtred.append(dismissal)
